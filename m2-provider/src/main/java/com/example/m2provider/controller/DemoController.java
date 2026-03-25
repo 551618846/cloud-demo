@@ -1,5 +1,6 @@
 package com.example.m2provider.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/demo")
 public class DemoController {
 
+    @Value("${server.port}")//不能刷新
+    private String serverPort;
+
     /**
      * 获取Demo信息
      * @param id 参数
@@ -20,7 +24,7 @@ public class DemoController {
      */
     @GetMapping("/{id}")
     public String getDemo(@PathVariable String id) {
-        return "Hello from m2-provider! You requested id: " + id;
+        return "Hello from m2-provider! You requested id: " + id+",serverPort="+serverPort;
     }
 
     /**
