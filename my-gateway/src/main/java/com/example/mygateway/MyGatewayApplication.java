@@ -1,6 +1,6 @@
 package com.example.mygateway;
 
-import com.example.mygateway.config.GrayLoadBalancerConfig;
+import com.example.common.gray.config.GrayLoadBalancerConfig;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;

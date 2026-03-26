@@ -1,6 +1,6 @@
-package com.example.m1consumer.config;
+package com.example.common.gray.config;
 
-import com.example.m1consumer.loadbalancer.GrayLoadBalancer;
+import com.example.common.gray.loadbalancer.GrayLoadBalancer;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.loadbalancer.core.ReactorLoadBalancer;
 import org.springframework.cloud.loadbalancer.core.ServiceInstanceListSupplier;
@@ -11,8 +11,9 @@ import org.springframework.core.env.Environment;
 /**
  * 灰度负载均衡配置
  * 注册自定义灰度负载均衡器
+ * <p>
+ * 使用方式：在启动类上添加 @LoadBalancerClients(defaultConfiguration = GrayLoadBalancerConfig.class)
  */
-//@Configuration
 public class GrayLoadBalancerConfig {
 
     @Bean

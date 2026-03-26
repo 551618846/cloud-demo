@@ -1,6 +1,6 @@
 package com.example.mygateway.service;
 
-import com.example.mygateway.config.GrayConfig;
+import com.example.common.gray.config.GrayConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;

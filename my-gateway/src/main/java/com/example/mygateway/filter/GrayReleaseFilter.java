@@ -1,12 +1,14 @@
 package com.example.mygateway.filter;
 
-import com.example.mygateway.config.GrayConfig;
-import com.example.mygateway.context.GrayContext;
+import com.example.common.gray.config.GrayConfig;
+import com.example.common.gray.context.GrayContext;
+import com.example.common.gray.constant.GrayConstant;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.cloud.gateway.route.Route;
+import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
 import org.springframework.core.Ordered;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -15,9 +17,7 @@ import reactor.core.publisher.Mono;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.regex.Pattern;
 
 /**
  * 灰度发布过滤器
@@ -26,11 +26,6 @@ import java.util.regex.Pattern;
 @Slf4j
 @Component
 public class GrayReleaseFilter implements GlobalFilter, Ordered {
-    
-    private static final String GRAY_VERSION_HEADER = "X-Gray-Version";
-    private static final String GRAY_USER_ID_HEADER = "X-Gray-UserId";
-    private static final String GRAY_TAG_HEADER = "X-Gray-Tag";
-    private static final String GRAY_RULE_HEADER = "X-Gray-Rule";
     
     private final GrayConfig grayConfig;
     private final Random random = new Random();
@@ -45,7 +40,12 @@ public class GrayReleaseFilter implements GlobalFilter, Ordered {
         if (!Boolean.TRUE.equals(grayConfig.getEnabled())) {
             return chain.filter(exchange);
         }
-        
+
+        //取路由id
+        Route route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
+        String routeId = route.getId();
+        String appid = (String)route.getMetadata().get("appid");
+
         // 获取目标服务名
         String serviceName = getServiceName(exchange);
         if (serviceName == null) {
@@ -253,15 +253,15 @@ public class GrayReleaseFilter implements GlobalFilter, Ordered {
         ServerHttpRequest.Builder requestBuilder = exchange.getRequest().mutate();
         
         // 添加必需的灰度头部
-        requestBuilder.header(GRAY_VERSION_HEADER, context.getVersion());
-        requestBuilder.header(GRAY_RULE_HEADER, context.getRuleName());
+        requestBuilder.header(GrayConstant.GRAY_VERSION_HEADER, context.getVersion());
+        requestBuilder.header(GrayConstant.GRAY_RULE_HEADER, context.getRuleName());
         
         // 添加可选的灰度头部
         if (context.getUserId() != null) {
-            requestBuilder.header(GRAY_USER_ID_HEADER, context.getUserId());
+            requestBuilder.header(GrayConstant.GRAY_USER_ID_HEADER, context.getUserId());
         }
         if (context.getTag() != null) {
-            requestBuilder.header(GRAY_TAG_HEADER, context.getTag());
+            requestBuilder.header(GrayConstant.GRAY_TAG_HEADER, context.getTag());
         }
         
         ServerHttpRequest newRequest = requestBuilder.build();

@@ -31,7 +31,7 @@
         <java.version>25</java.version>
         <spring-cloud.version>2025.1.0</spring-cloud.version>
         <spring-cloud-alibaba.version>2025.1.0.0</spring-cloud-alibaba.version>
-        <lombok.version>1.18.32</lombok.version>
+        <lombok.version>1.18.44</lombok.version>
     </properties>
 
     <modules>
@@ -39,6 +39,7 @@
         <module>m2-provider</module>
         <module>my-gateway</module>
         <module>common-logging</module>
+        <module>common-gray</module>
     </modules>
     <dependencyManagement>
         <dependencies>

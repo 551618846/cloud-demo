@@ -1,6 +1,6 @@
 package com.example.mygateway.controller;
 
-import com.example.mygateway.config.GrayConfig;
+import com.example.common.gray.config.GrayConfig;
 import com.example.mygateway.service.GrayServiceManager;
 import lombok.AllArgsConstructor;
 import lombok.Data;
