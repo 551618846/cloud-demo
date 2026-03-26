@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @ConditionalOnWebApplication
-@Import({LoggingAspect.class})
+@Import({LoggingAspect.class})//建议：实践中可以移除 @Import，直接在 @Bean 方法上声明即可；或者保留 @Import 并删除 @Bean 方法。两种方式均可，但不宜混用
 public class LoggingAutoConfiguration {
 
     /**
