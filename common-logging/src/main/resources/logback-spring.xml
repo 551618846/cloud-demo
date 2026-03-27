@@ -6,11 +6,4 @@
     <!-- 引入公共日志模板 -->
     <include resource="template/logback-base.xml"/>
 
-    <!-- 特定包的日志级别 -->
-    <logger name="com.example.m2provider" level="DEBUG" additivity="false">
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="ASYNC_FILE_ALL"/>
-        <appender-ref ref="ASYNC_FILE_ERROR"/>
-    </logger>
-
 </configuration>
