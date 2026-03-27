@@ -31,7 +31,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         long startTime = System.currentTimeMillis();
         String requestId = getOrGenerateRequestId(request);
-        MDC.put(MDC_REQUEST_ID_KEY, requestId);
+//        MDC.put(MDC_REQUEST_ID_KEY, requestId);
 
         // 包装请求和响应以支持内容缓存（用于记录请求/响应体）
         boolean isFirstRequest = !isAsyncDispatch(request);
@@ -59,7 +59,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
                 ContentCachingResponseWrapper responseWrapper = (ContentCachingResponseWrapper) responseToUse;
                 responseWrapper.copyBodyToResponse();
             }
-            MDC.clear();
+//            MDC.clear();
         }
     }
 
