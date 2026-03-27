@@ -9,13 +9,33 @@
     <!-- 日志文件存放路径 -->
     <property name="LOG_HOME" value="logs"/>
 
+    <!-- add converter for %tid -->
+    <conversionRule conversionWord="tid" converterClass="org.apache.skywalking.apm.toolkit.log.logback.v1.x.LogbackPatternConverter"/>
+    <!-- add converter for %sw_ctx -->
+    <conversionRule conversionWord="sw_ctx" converterClass="org.apache.skywalking.apm.toolkit.log.logback.v1.x.LogbackSkyWalkingContextPatternConverter"/>
+
+
     <!-- 控制台输出 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
-            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
-                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
-            </layout>
-            <charset>UTF-8</charset>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp>
+                    <timeZone>UTC</timeZone>
+                </timestamp>
+                <pattern>
+                    <pattern>
+                        {
+                        "level": "%level",
+                        "tid": "%tid",
+                        "skyWalkingContext": "%sw_ctx",
+                        "thread": "%thread",
+                        "class": "%logger{0}:%L",
+                        "message": "%message",
+                        "stackTrace": "%exception{10}"
+                        }
+                    </pattern>
+                </pattern>
+            </providers>
         </encoder>
     </appender>
 
