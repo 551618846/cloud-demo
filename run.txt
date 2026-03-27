@@ -1,0 +1,13 @@
+
+
+
+--Invoke-Expression ([System.Text.Encoding]::UTF8.GetString((Get-Content -Path ".\skywalking-quickstart-docker.ps1" -Raw -Encoding Byte)))
+docker compose -f docker-compose-skywalking.yml --project-name=skywalking-quickstart --profile=banyandb up --detach --wait
+docker compose --project-name=skywalking-quickstart down
+
+UI at http://localhost:8080
+
+
+docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-kafka.yml down && docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-kafka.yml up -d
+
+docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-es.yml down && docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-es.yml up -d
