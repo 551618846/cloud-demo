@@ -56,6 +56,12 @@
             <artifactId>logback-core</artifactId>
         </dependency>
 
+        <!-- SkyWalking Logback Toolkit -->
+        <dependency>
+            <groupId>org.apache.skywalking</groupId>
+            <artifactId>apm-toolkit-logback-1.x</artifactId>
+        </dependency>
+
         <!-- Spring AOP for logging aspect -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

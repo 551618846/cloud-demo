@@ -3,6 +3,7 @@ package com.example.m1consumer.controller;
 import com.alibaba.cloud.nacos.annotation.NacosConfig;
 import com.example.m1consumer.client.DemoFeignClient;
 import com.example.m1consumer.config.CustomConfig;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 /**
  * 示例控制器
@@ -58,6 +61,8 @@ public class DemoController {
      */
     @GetMapping("/local")
     public String localEndpoint() {
+        Map<String, String> context = MDC.getCopyOfContextMap();
+        System.out.println("MDC: " + context);
         return "This is a local endpoint from m1-consumer service:" + conf + ",:conf2=" + conf2+",serverPort="+serverPort;
     }
 

@@ -32,3 +32,10 @@ build/
 ### VS Code ###
 .vscode/
 /logs/
+
+### SkyWalking Agent ###
+/skywalking-agent/skywalking-agent.jar
+/skywalking-agent/logs/
+/skywalking-agent/plugins/
+/skywalking-agent/optional-plugins/
+/skywalking-agent/activations/

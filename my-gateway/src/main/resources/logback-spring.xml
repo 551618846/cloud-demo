@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <!-- 定义日志输出格式 -->
+    <!-- 定义日志输出格式（含SkyWalking TraceId） -->
     <property name="CONSOLE_LOG_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%tid] %-5level %logger{36} - %msg%n"/>
     <property name="FILE_LOG_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] [%tid] %-5level %logger{36} - %msg%n"/>
 
     <!-- 日志文件存放路径 -->
     <property name="LOG_HOME" value="logs"/>
 
     <!-- 控制台输出 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            </layout>
             <charset>UTF-8</charset>
         </encoder>
     </appender>
@@ -20,8 +22,10 @@
     <!-- 文件输出 - 所有日志 -->
     <appender name="FILE_ALL" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_HOME}/my-gateway-all.log</file>
-        <encoder>
-            <pattern>${FILE_LOG_PATTERN}</pattern>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+                <pattern>${FILE_LOG_PATTERN}</pattern>
+            </layout>
             <charset>UTF-8</charset>
         </encoder>
         <!-- 滚动策略 -->
@@ -38,8 +42,10 @@
     <!-- 文件输出 - 错误日志 -->
     <appender name="FILE_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_HOME}/my-gateway-error.log</file>
-        <encoder>
-            <pattern>${FILE_LOG_PATTERN}</pattern>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+                <pattern>${FILE_LOG_PATTERN}</pattern>
+            </layout>
             <charset>UTF-8</charset>
         </encoder>
         <!-- 滚动策略 -->
