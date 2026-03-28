@@ -26,6 +26,15 @@ filebeat.inputs:
       env: dev
     fields_under_root: true
 
+processors:
+  - decode_json_fields:
+      fields: ["message"]
+      target: ""
+      overwrite_keys: true
+  - drop_fields:
+      fields: ["host", "agent", "ecs", "input", "log", "@version"]
+      ignore_missing: true
+
 output.elasticsearch:
   hosts: ["http://elasticsearch:9200"]
   indices:
