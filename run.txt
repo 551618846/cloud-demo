@@ -2,9 +2,11 @@
 
 
 --Invoke-Expression ([System.Text.Encoding]::UTF8.GetString((Get-Content -Path ".\skywalking-quickstart-docker.ps1" -Raw -Encoding Byte)))
+
+--启动skywalking
 docker compose -f docker-compose-skywalking.yml --project-name=skywalking-quickstart --profile=banyandb up --detach --wait
 docker compose --project-name=skywalking-quickstart down
-
+--访问skywalking
 UI at http://localhost:8080
 
 
@@ -14,8 +16,13 @@ docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-es.yml down &&
 
 docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-es.yml up -d
 
-
+--查看es
 http://localhost:9200/m1-consumer-*/_search?size=5
+
+--本项目重新构建部署
+mvn clean package -DskipTests
+docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-app.yml up -d --build
+
 
 docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-app.yml up -d
 docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-app.yml down

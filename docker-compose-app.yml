@@ -7,12 +7,14 @@ services:
       - "8081:8081"
     volumes:
       - ./logs:/app/logs
+      - D:/software/apache-skywalking-java-agent-9.6.0/skywalking-agent:/skywalking-agent:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
       - SPRING_CLOUD_NACOS_SERVER_ADDR=host.docker.internal:8848
       - SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR=host.docker.internal:8848
       - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=host.docker.internal:8848
+      - JAVA_OPTS=-javaagent:/skywalking-agent/skywalking-agent.jar -Dskywalking.agent.service_name=m1-consumer-service -Dskywalking.collector.backend_service=host.docker.internal:11800
 
   m2-provider:
     build: ./m2-provider
@@ -22,12 +24,14 @@ services:
       - "8082:8082"
     volumes:
       - ./logs:/app/logs
+      - D:/software/apache-skywalking-java-agent-9.6.0/skywalking-agent:/skywalking-agent:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
       - SPRING_CLOUD_NACOS_SERVER_ADDR=host.docker.internal:8848
       - SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR=host.docker.internal:8848
       - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=host.docker.internal:8848
+      - JAVA_OPTS=-javaagent:/skywalking-agent/skywalking-agent.jar -Dskywalking.agent.service_name=m2-provider-service -Dskywalking.collector.backend_service=host.docker.internal:11800
 
   my-gateway:
     build: ./my-gateway
@@ -37,9 +41,11 @@ services:
       - "8888:8888"
     volumes:
       - ./logs:/app/logs
+      - D:/software/apache-skywalking-java-agent-9.6.0/skywalking-agent:/skywalking-agent:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
       - SPRING_CLOUD_NACOS_SERVER_ADDR=host.docker.internal:8848
       - SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR=host.docker.internal:8848
       - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=host.docker.internal:8848
+      - JAVA_OPTS=-javaagent:/skywalking-agent/skywalking-agent.jar -Dskywalking.agent.service_name=my-gateway-service -Dskywalking.collector.backend_service=host.docker.internal:11800
