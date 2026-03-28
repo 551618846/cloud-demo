@@ -17,5 +17,7 @@ docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-es.yml up -d
 
 http://localhost:9200/m1-consumer-*/_search?size=5
 
+docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-app.yml up -d
+docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-app.yml down
 
 

@@ -1,0 +1,45 @@
+services:
+  m1-consumer:
+    build: ./m1-consumer
+    image: m1-consumer:latest
+    container_name: m1-consumer
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./logs:/app/logs
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - SPRING_CLOUD_NACOS_SERVER_ADDR=host.docker.internal:8848
+      - SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR=host.docker.internal:8848
+      - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=host.docker.internal:8848
+
+  m2-provider:
+    build: ./m2-provider
+    image: m2-provider:latest
+    container_name: m2-provider
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./logs:/app/logs
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - SPRING_CLOUD_NACOS_SERVER_ADDR=host.docker.internal:8848
+      - SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR=host.docker.internal:8848
+      - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=host.docker.internal:8848
+
+  my-gateway:
+    build: ./my-gateway
+    image: my-gateway:latest
+    container_name: my-gateway
+    ports:
+      - "8888:8888"
+    volumes:
+      - ./logs:/app/logs
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      - SPRING_CLOUD_NACOS_SERVER_ADDR=host.docker.internal:8848
+      - SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR=host.docker.internal:8848
+      - SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR=host.docker.internal:8848

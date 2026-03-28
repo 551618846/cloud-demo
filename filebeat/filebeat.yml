@@ -8,9 +8,36 @@ filebeat.inputs:
       env: dev
     fields_under_root: true
 
+  - type: log
+    enabled: true
+    paths:
+      - /logs/m2-provider-service-all.log
+    fields:
+      app: m2-provider
+      env: dev
+    fields_under_root: true
+
+  - type: log
+    enabled: true
+    paths:
+      - /logs/my-gateway-service-all.log
+    fields:
+      app: my-gateway
+      env: dev
+    fields_under_root: true
+
 output.elasticsearch:
   hosts: ["http://elasticsearch:9200"]
-  index: "m1-consumer-%{+yyyy.MM.dd}"
+  indices:
+    - index: "m1-consumer-%{+yyyy.MM.dd}"
+      when.equals:
+        app: "m1-consumer"
+    - index: "m2-provider-%{+yyyy.MM.dd}"
+      when.equals:
+        app: "m2-provider"
+    - index: "my-gateway-%{+yyyy.MM.dd}"
+      when.equals:
+        app: "my-gateway"
 
-setup.template.name: "m1-consumer"
-setup.template.pattern: "m1-consumer-*"
+setup.template.name: "cloud-demo"
+setup.template.pattern: "cloud-demo-*"
