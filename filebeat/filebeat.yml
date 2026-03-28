@@ -1,0 +1,16 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - /logs/m1-consumer-service-all.log
+    fields:
+      app: m1-consumer
+      env: dev
+    fields_under_root: true
+
+output.elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  index: "m1-consumer-%{+yyyy.MM.dd}"
+
+setup.template.name: "m1-consumer"
+setup.template.pattern: "m1-consumer-*"

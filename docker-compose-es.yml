@@ -29,5 +29,17 @@ services:
       elasticsearch:
         condition: service_healthy
 
+  filebeat:
+    image: docker.1ms.run/elastic/filebeat:8.17.4
+    container_name: filebeat
+    user: root
+    command: filebeat -e --strict.perms=false
+    volumes:
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - ./logs:/logs:ro
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
 volumes:
   es-data:

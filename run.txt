@@ -11,3 +11,11 @@ UI at http://localhost:8080
 docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-kafka.yml down && docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-kafka.yml up -d
 
 docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-es.yml down && docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-es.yml up -d
+
+docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-es.yml up -d
+
+
+http://localhost:9200/m1-consumer-*/_search?size=5
+
+
+
