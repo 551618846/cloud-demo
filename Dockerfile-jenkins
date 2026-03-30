@@ -1,0 +1,15 @@
+FROM jenkins/jenkins:lts
+
+USER root
+
+# 安装 Docker CLI
+RUN apt-get update \
+    && apt-get install -y docker.io curl \
+    && curl -L "https://github.com/docker/compose/releases/download/v2.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose \
+    && chmod +x /usr/local/bin/docker-compose \
+    && rm -rf /var/lib/apt/lists/*
+
+# 验证安装
+RUN docker --version && docker-compose --version
+
+USER jenkins

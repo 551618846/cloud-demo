@@ -1,6 +1,9 @@
 services:
   jenkins:
-    image: jenkins/jenkins:lts
+    build:
+      context: .
+      dockerfile: Dockerfile-jenkins
+    image: jenkins-custom:latest
     container_name: jenkins
     privileged: true
     user: root
@@ -19,9 +22,6 @@ services:
     command:
       - -c
       - |
-        apt-get update && apt-get install -y docker.io
-        curl -L "https://github.com/docker/compose/releases/download/v2.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-        chmod +x /usr/local/bin/docker-compose
         mkdir -p /root/.ssh
         cp /host_ssh/id_rsa /root/.ssh/id_rsa
         cp /host_ssh/id_rsa.pub /root/.ssh/id_rsa.pub
@@ -29,7 +29,6 @@ services:
         chmod 600 /root/.ssh/id_rsa
         chmod 644 /root/.ssh/id_rsa.pub
         ssh-keyscan github.com >> /root/.ssh/known_hosts 2>/dev/null
-        docker-compose --version
         /usr/local/bin/jenkins.sh
 
 volumes:
