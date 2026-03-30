@@ -36,7 +36,7 @@ services:
     command: filebeat -e --strict.perms=false
     volumes:
       - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - ./logs:/logs:ro
+      - D:/git_rep/cloud-demo/cloud-demo/logs:/logs:ro
     depends_on:
       elasticsearch:
         condition: service_healthy
