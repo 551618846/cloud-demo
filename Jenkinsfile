@@ -37,7 +37,7 @@ pipeline {
                 echo 'Building Docker images...'
                 unstash 'source'
                 unstash 'artifacts'
-                sh "docker compose -f ${WORKSPACE}/${COMPOSE_FILE} build"
+                sh "docker-compose -f ${WORKSPACE}/${COMPOSE_FILE} build"
             }
         }
 
@@ -45,8 +45,8 @@ pipeline {
             agent any
             steps {
                 echo 'Deploying services...'
-                sh "docker compose -f ${WORKSPACE}/${COMPOSE_FILE} down"
-                sh "docker compose -f ${WORKSPACE}/${COMPOSE_FILE} up -d"
+                sh "docker-compose -f ${WORKSPACE}/${COMPOSE_FILE} down"
+                sh "docker-compose -f ${WORKSPACE}/${COMPOSE_FILE} up -d"
             }
         }
 
