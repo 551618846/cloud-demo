@@ -32,5 +32,12 @@ docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-app.yml down
 http://localhost:8080/jenkins/
 admin 密码 2648ebcfccb24faba1c7d9901c10cc88   2648ebcfccb24faba1c7d9901c10cc88
 
+原地址: https://github.com/551618846/cloud-demo.git
+新地址: git@github.com:551618846/cloud-demo.git
+
+
+
+
+
 
 
