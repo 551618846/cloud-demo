@@ -12,4 +12,9 @@ RUN apt-get update \
 # 验证安装
 RUN docker --version && docker-compose --version
 
+# 预装 GitHub 主机密钥
+RUN mkdir -p /root/.ssh \
+    && ssh-keyscan github.com >> /root/.ssh/known_hosts 2>/dev/null \
+    && chmod 644 /root/.ssh/known_hosts
+
 USER jenkins
