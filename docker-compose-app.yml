@@ -6,7 +6,7 @@ services:
     ports:
       - "8081:8081"
     volumes:
-      - ./logs:/app/logs
+      - D:/git_rep/cloud-demo/cloud-demo/logs:/app/logs
       - D:/software/apache-skywalking-java-agent-9.6.0/skywalking-agent:/skywalking-agent:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -23,7 +23,7 @@ services:
     ports:
       - "8082:8082"
     volumes:
-      - ./logs:/app/logs
+      - D:/git_rep/cloud-demo/cloud-demo/logs:/app/logs
       - D:/software/apache-skywalking-java-agent-9.6.0/skywalking-agent:/skywalking-agent:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -40,7 +40,7 @@ services:
     ports:
       - "8888:8888"
     volumes:
-      - ./logs:/app/logs
+      - D:/git_rep/cloud-demo/cloud-demo/logs:/app/logs
       - D:/software/apache-skywalking-java-agent-9.6.0/skywalking-agent:/skywalking-agent:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
