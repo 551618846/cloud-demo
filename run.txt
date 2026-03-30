@@ -28,3 +28,9 @@ docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-app.yml up -d
 docker compose -f d:/git_rep/cloud-demo/cloud-demo/docker-compose-app.yml down
 
 
+--Jenkins
+http://localhost:8080/jenkins/
+密码 2648ebcfccb24faba1c7d9901c10cc88
+
+
+
