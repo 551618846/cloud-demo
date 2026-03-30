@@ -1,0 +1,115 @@
+pipeline {
+    agent none
+
+    environment {
+        COMPOSE_FILE = 'docker-compose-app.yml'
+        K8S_NAMESPACE = 'cloud-demo'
+        // 镜像仓库地址 (根据实际情况修改)
+        REGISTRY = 'localhost:5000'
+    }
+
+    stages {
+        stage('Checkout') {
+            agent any
+            steps {
+                echo 'Checkout code...'
+                checkout scm
+                stash includes: '**/*', name: 'source'
+            }
+        }
+
+        stage('Build') {
+            agent {
+                docker {
+                    image 'maven:3.9-eclipse-temurin-21'
+                    args '-v $HOME/.m2:/root/.m2'
+                }
+            }
+            steps {
+                echo 'Building project...'
+                unstash 'source'
+                sh 'mvn clean package -DskipTests'
+                stash includes: '**/target/*.jar', name: 'artifacts'
+            }
+        }
+
+        stage('Build Images') {
+            agent any
+            steps {
+                echo 'Building Docker images...'
+                unstash 'source'
+                unstash 'artifacts'
+                sh "docker-compose -f ${WORKSPACE}/${COMPOSE_FILE} build"
+
+                // 标记镜像推送到仓库
+                script {
+                    def services = ['m1-consumer', 'm2-provider', 'my-gateway']
+                    services.each { service ->
+                        sh "docker tag ${service}:latest ${REGISTRY}/${service}:${BUILD_NUMBER}"
+                        sh "docker tag ${service}:latest ${REGISTRY}/${service}:latest"
+                    }
+                }
+            }
+        }
+
+        stage('Push Images') {
+            agent any
+            steps {
+                echo 'Pushing images to registry...'
+                script {
+                    def services = ['m1-consumer', 'm2-provider', 'my-gateway']
+                    services.each { service ->
+                        sh "docker push ${REGISTRY}/${service}:${BUILD_NUMBER}"
+                        sh "docker push ${REGISTRY}/${service}:latest"
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to K8s') {
+            agent any
+            steps {
+                echo 'Deploying to Kubernetes...'
+                unstash 'source'
+
+                // 更新镜像版本
+                sh """
+                    cd k8s
+                    kustomize edit set image m1-consumer=${REGISTRY}/m1-consumer:${BUILD_NUMBER}
+                    kustomize edit set image m2-provider=${REGISTRY}/m2-provider:${BUILD_NUMBER}
+                    kustomize edit set image my-gateway=${REGISTRY}/my-gateway:${BUILD_NUMBER}
+                """
+
+                // 应用配置
+                sh 'kubectl apply -k ${WORKSPACE}/k8s'
+
+                // 等待部署完成
+                sh """
+                    kubectl rollout status deployment/m1-consumer -n ${K8S_NAMESPACE} --timeout=300s
+                    kubectl rollout status deployment/m2-provider -n ${K8S_NAMESPACE} --timeout=300s
+                    kubectl rollout status deployment/my-gateway -n ${K8S_NAMESPACE} --timeout=300s
+                """
+            }
+        }
+
+        stage('Health Check') {
+            agent any
+            steps {
+                echo 'Checking services health...'
+                sh "kubectl get pods -n ${K8S_NAMESPACE}"
+                sh "kubectl get services -n ${K8S_NAMESPACE}"
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment to Kubernetes successful!'
+        }
+        failure {
+            echo 'Deployment to Kubernetes failed!'
+            // 可选: 回滚
+            // sh 'kubectl rollout undo deployment/m1-consumer -n ${K8S_NAMESPACE}'
+        }
+    }
+}

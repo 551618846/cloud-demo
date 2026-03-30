@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloud-demo-config
+  namespace: cloud-demo
+data:
+  # Nacos 配置
+  NACOS_SERVER_ADDR: "nacos.cloud-demo.svc.cluster.local:8848"
+  NACOS_NAMESPACE: "dev"
+
+  # SkyWalking 配置
+  SKYWALKING_COLLECTOR: "skywalking-oap.cloud-demo.svc.cluster.local:11800"
+
+  # Spring Profile
+  SPRING_PROFILES_ACTIVE: "dev"

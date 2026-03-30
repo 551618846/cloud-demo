@@ -1,0 +1,29 @@
+# K8s 部署配置
+# 使用方法: kubectl apply -k ./k8s
+
+resources:
+# 基础设施
+- namespace.yaml
+
+# 中间件 (按顺序部署)
+- nacos.yaml
+- skywalking.yaml
+- elastic-stack.yaml
+
+# 应用服务
+- configmap.yaml
+- deployments.yaml
+- services.yaml
+- ingress.yaml
+
+# 镜像配置 (Jenkins 会动态更新)
+images:
+- name: m1-consumer
+  newName: m1-consumer
+  newTag: latest
+- name: m2-provider
+  newName: m2-provider
+  newTag: latest
+- name: my-gateway
+  newName: my-gateway
+  newTag: latest

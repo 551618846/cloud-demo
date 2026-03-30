@@ -1,0 +1,197 @@
+# ==================== Elasticsearch for SkyWalking ====================
+apiVersion: v1
+kind: Service
+metadata:
+  name: skywalking-es
+  namespace: cloud-demo
+  labels:
+    app: skywalking-es
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9200
+    targetPort: 9200
+    name: http
+  - port: 9300
+    targetPort: 9300
+    name: transport
+  selector:
+    app: skywalking-es
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: skywalking-es
+  namespace: cloud-demo
+  labels:
+    app: skywalking-es
+spec:
+  serviceName: skywalking-es
+  replicas: 1
+  selector:
+    matchLabels:
+      app: skywalking-es
+  template:
+    metadata:
+      labels:
+        app: skywalking-es
+    spec:
+      containers:
+      - name: elasticsearch
+        image: docker.1ms.run/elastic/elasticsearch:8.17.4
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9200
+        - containerPort: 9300
+        env:
+        - name: discovery.type
+          value: single-node
+        - name: ES_JAVA_OPTS
+          value: "-Xms512m -Xmx512m"
+        - name: xpack.security.enabled
+          value: "false"
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1"
+        volumeMounts:
+        - name: es-data
+          mountPath: /usr/share/elasticsearch/data
+      volumes:
+      - name: es-data
+        emptyDir: {}
+
+---
+# ==================== SkyWalking OAP ====================
+apiVersion: v1
+kind: Service
+metadata:
+  name: skywalking-oap
+  namespace: cloud-demo
+  labels:
+    app: skywalking-oap
+spec:
+  type: ClusterIP
+  ports:
+  - port: 11800
+    targetPort: 11800
+    name: grpc
+  - port: 12800
+    targetPort: 12800
+    name: http
+  selector:
+    app: skywalking-oap
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skywalking-oap
+  namespace: cloud-demo
+  labels:
+    app: skywalking-oap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: skywalking-oap
+  template:
+    metadata:
+      labels:
+        app: skywalking-oap
+    spec:
+      containers:
+      - name: skywalking-oap
+        image: docker.1ms.run/apache/skywalking-oap-server:9.6.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 11800
+        - containerPort: 12800
+        env:
+        - name: SW_STORAGE
+          value: elasticsearch
+        - name: SW_STORAGE_ES_CLUSTER_NODES
+          value: "skywalking-es:9200"
+        - name: SW_HEALTH_CHECKER
+          value: default
+        - name: TZ
+          value: Asia/Shanghai
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /graphql
+            port: 12800
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /graphql
+            port: 12800
+          initialDelaySeconds: 30
+          periodSeconds: 5
+
+---
+# ==================== SkyWalking UI ====================
+apiVersion: v1
+kind: Service
+metadata:
+  name: skywalking-ui
+  namespace: cloud-demo
+  labels:
+    app: skywalking-ui
+spec:
+  type: NodePort
+  ports:
+  - port: 8080
+    targetPort: 8080
+    nodePort: 30080
+    name: http
+  selector:
+    app: skywalking-ui
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skywalking-ui
+  namespace: cloud-demo
+  labels:
+    app: skywalking-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: skywalking-ui
+  template:
+    metadata:
+      labels:
+        app: skywalking-ui
+    spec:
+      containers:
+      - name: skywalking-ui
+        image: docker.1ms.run/apache/skywalking-ui:9.6.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SW_OAP_ADDRESS
+          value: "http://skywalking-oap:12800"
+        - name: TZ
+          value: Asia/Shanghai
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"

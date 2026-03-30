@@ -1,0 +1,250 @@
+# ==================== m1-consumer ====================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: m1-consumer
+  namespace: cloud-demo
+  labels:
+    app: m1-consumer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: m1-consumer
+  template:
+    metadata:
+      labels:
+        app: m1-consumer
+        version: v1
+    spec:
+      containers:
+      - name: m1-consumer
+        image: m1-consumer:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8081
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              name: cloud-demo-config
+              key: SPRING_PROFILES_ACTIVE
+        - name: SPRING_CLOUD_NACOS_SERVER_ADDR
+          valueFrom:
+            configMapKeyRef:
+              name: cloud-demo-config
+              key: NACOS_SERVER_ADDR
+        - name: SPRING_CLOUD_NACOS_CONFIG_NAMESPACE
+          valueFrom:
+            configMapKeyRef:
+              name: cloud-demo-config
+              key: NACOS_NAMESPACE
+        - name: JAVA_OPTS
+          value: "-javaagent:/skywalking-agent/skywalking-agent.jar -Dskywalking.agent.service_name=m1-consumer-service -Dskywalking.collector.backend_service=$(SKYWALKING_COLLECTOR)"
+        - name: SKYWALKING_COLLECTOR
+          valueFrom:
+            configMapKeyRef:
+              name: cloud-demo-config
+              key: SKYWALKING_COLLECTOR
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        volumeMounts:
+        - name: logs
+          mountPath: /app/logs
+        - name: skywalking-agent
+          mountPath: /skywalking-agent
+          readOnly: true
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8081
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8081
+          initialDelaySeconds: 30
+          periodSeconds: 5
+      volumes:
+      - name: logs
+        hostPath:
+          path: /var/log/cloud-demo
+          type: DirectoryOrCreate
+      - name: skywalking-agent
+        hostPath:
+          path: /opt/skywalking-agent
+          type: Directory
+
+---
+# ==================== m2-provider ====================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: m2-provider
+  namespace: cloud-demo
+  labels:
+    app: m2-provider
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: m2-provider
+  template:
+    metadata:
+      labels:
+        app: m2-provider
+        version: v1
+    spec:
+      containers:
+      - name: m2-provider
+        image: m2-provider:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8082
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              name: cloud-demo-config
+              key: SPRING_PROFILES_ACTIVE
+        - name: SPRING_CLOUD_NACOS_SERVER_ADDR
+          valueFrom:
+            configMapKeyRef:
+              name: cloud-demo-config
+              key: NACOS_SERVER_ADDR
+        - name: SPRING_CLOUD_NACOS_CONFIG_NAMESPACE
+          valueFrom:
+            configMapKeyRef:
+              name: cloud-demo-config
+              key: NACOS_NAMESPACE
+        - name: JAVA_OPTS
+          value: "-javaagent:/skywalking-agent/skywalking-agent.jar -Dskywalking.agent.service_name=m2-provider-service -Dskywalking.collector.backend_service=$(SKYWALKING_COLLECTOR)"
+        - name: SKYWALKING_COLLECTOR
+          valueFrom:
+            configMapKeyRef:
+              name: cloud-demo-config
+              key: SKYWALKING_COLLECTOR
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        volumeMounts:
+        - name: logs
+          mountPath: /app/logs
+        - name: skywalking-agent
+          mountPath: /skywalking-agent
+          readOnly: true
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8082
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8082
+          initialDelaySeconds: 30
+          periodSeconds: 5
+      volumes:
+      - name: logs
+        hostPath:
+          path: /var/log/cloud-demo
+          type: DirectoryOrCreate
+      - name: skywalking-agent
+        hostPath:
+          path: /opt/skywalking-agent
+          type: Directory
+
+---
+# ==================== my-gateway ====================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-gateway
+  namespace: cloud-demo
+  labels:
+    app: my-gateway
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-gateway
+  template:
+    metadata:
+      labels:
+        app: my-gateway
+        version: v1
+    spec:
+      containers:
+      - name: my-gateway
+        image: my-gateway:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8888
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              name: cloud-demo-config
+              key: SPRING_PROFILES_ACTIVE
+        - name: SPRING_CLOUD_NACOS_SERVER_ADDR
+          valueFrom:
+            configMapKeyRef:
+              name: cloud-demo-config
+              key: NACOS_SERVER_ADDR
+        - name: SPRING_CLOUD_NACOS_CONFIG_NAMESPACE
+          valueFrom:
+            configMapKeyRef:
+              name: cloud-demo-config
+              key: NACOS_NAMESPACE
+        - name: JAVA_OPTS
+          value: "-javaagent:/skywalking-agent/skywalking-agent.jar -Dskywalking.agent.service_name=my-gateway-service -Dskywalking.collector.backend_service=$(SKYWALKING_COLLECTOR)"
+        - name: SKYWALKING_COLLECTOR
+          valueFrom:
+            configMapKeyRef:
+              name: cloud-demo-config
+              key: SKYWALKING_COLLECTOR
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        volumeMounts:
+        - name: logs
+          mountPath: /app/logs
+        - name: skywalking-agent
+          mountPath: /skywalking-agent
+          readOnly: true
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8888
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8888
+          initialDelaySeconds: 30
+          periodSeconds: 5
+      volumes:
+      - name: logs
+        hostPath:
+          path: /var/log/cloud-demo
+          type: DirectoryOrCreate
+      - name: skywalking-agent
+        hostPath:
+          path: /opt/skywalking-agent
+          type: Directory

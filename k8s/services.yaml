@@ -1,0 +1,55 @@
+# ==================== m1-consumer Service ====================
+apiVersion: v1
+kind: Service
+metadata:
+  name: m1-consumer
+  namespace: cloud-demo
+  labels:
+    app: m1-consumer
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8081
+    targetPort: 8081
+    protocol: TCP
+    name: http
+  selector:
+    app: m1-consumer
+
+---
+# ==================== m2-provider Service ====================
+apiVersion: v1
+kind: Service
+metadata:
+  name: m2-provider
+  namespace: cloud-demo
+  labels:
+    app: m2-provider
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8082
+    targetPort: 8082
+    protocol: TCP
+    name: http
+  selector:
+    app: m2-provider
+
+---
+# ==================== my-gateway Service ====================
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-gateway
+  namespace: cloud-demo
+  labels:
+    app: my-gateway
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8888
+    targetPort: 8888
+    protocol: TCP
+    name: http
+  selector:
+    app: my-gateway
